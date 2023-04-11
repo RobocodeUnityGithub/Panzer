@@ -5,46 +5,41 @@ using UnityEngine;
 public class Tourelle : MonoBehaviour
 {
     [SerializeField] private Transform weaponTransform;
-    [SerializeField] private Transform muzzle;
     [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] float range = 15f;
     private Transform playerTransform;
 
-
-    [SerializeField] private GameObject shellPrefab;
-    [SerializeField] private float gunReload;
-    private bool canShoot = true;
-
+    private float distanceToTarget;
+    private TourelleGun tourelleGun;
 
     private void Start()
     {
+        tourelleGun = GetComponent<TourelleGun>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     private void Update()
     {
-
-        if (playerTransform != null && playerTransform.gameObject.activeSelf)
+        distanceToTarget = Vector2.Distance(transform.position, playerTransform.position);
+        if ( distanceToTarget < range)
         {
-            Vector3 direction = playerTransform.position - weaponTransform.position;
-
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward);
-            weaponTransform.rotation = Quaternion.Slerp(weaponTransform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
-
-            if (canShoot)
-            {
-                canShoot = false;
-                GameObject shell = Instantiate(shellPrefab, muzzle.transform.position, muzzle.transform.rotation);
-                Physics2D.IgnoreCollision(GetComponent<Collider2D>(), shell.GetComponent<Collider2D>());
-
-                Invoke("Relod", gunReload);
-            }
+            RotationToTarget();
+            tourelleGun.Shoot();
         }
     }
 
-    private void Relod()
+    private void RotationToTarget()
     {
-        canShoot = true;
+        Vector3 direction = playerTransform.position - weaponTransform.position;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        weaponTransform.rotation = Quaternion.Slerp(weaponTransform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, range);
+    }
 }
