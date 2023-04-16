@@ -7,6 +7,7 @@ public class TourelleGun : MonoBehaviour
     [SerializeField] private Transform muzzle;
     [SerializeField] private GameObject shellPrefab;
     [SerializeField] private float gunReload;
+    [SerializeField] private AudioClip shootSound;
     private bool canShoot = true;
 
 
@@ -14,6 +15,7 @@ public class TourelleGun : MonoBehaviour
     {
         if (canShoot)
         {
+            AudioSource.PlayClipAtPoint(shootSound, muzzle.transform.position);
             canShoot = false;
             GameObject shell = Instantiate(shellPrefab, muzzle.transform.position, muzzle.transform.rotation);
             Physics2D.IgnoreCollision(GetComponent<Collider2D>(), shell.GetComponent<Collider2D>());
