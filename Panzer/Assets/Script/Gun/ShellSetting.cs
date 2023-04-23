@@ -44,9 +44,9 @@ public class ShellSetting : MonoBehaviour
             Destroy(gameObject);
         }
 
-       /* if (collision.gameObject.tag == ("Shell"))
-        {
+       if (collision.gameObject.tag == ("Shell"))
+       {
             Destroy(gameObject);
-        }*/
+       }
     }
 }
